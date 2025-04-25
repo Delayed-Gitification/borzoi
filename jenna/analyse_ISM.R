@@ -21,8 +21,21 @@ write_csv(best_muts, "/Volumes/lab-ulej/home/users/wilkino/POSTDOC/borzoi/borzoi
 
 df_second_mut <- read_csv("/Volumes/lab-ulej/home/users/wilkino/POSTDOC/borzoi/borzoi/jenna/ism_results_second_mut.csv")
 
+df2 <- df_second_mut %>%
+  filter(1:n() > 1) %>%
+  mutate(position = as.numeric(position)) %>%
+  mutate(downsampled = 10*as.integer(position/10000))
+
 df_second_mut2 <- df_second_mut %>%
   mutate(initial_pos = as.numeric(word(first_mutation, 1, sep=';')),
          initial_nt = word(first_mutation, 2, sep=';')) %>%
   left_join(df %>% dplyr::select(initial_pos = position, initial_nt = nucleotide, initial_score = score)) %>%
   mutate(score_change = score - initial_score)
+
+ggplot(df2, aes(x = factor(downsampled), y = score)) +
+  geom_boxplot() +
+  xlab('Genomic position/kb')
+
+
+
+err <- read_csv("/Volumes/lab-ulej/home/users/wilkino/POSTDOC/borzoi/borzoi/jenna/best_targets.csv")
